@@ -1,0 +1,51 @@
+=== Reporte de Escaneo ===
+Fecha: 2024-10-23_20-18-47
+
+Host: 192.168.0.1
+MAC: E4:57:40:9A:1C:1B
+Puertos:
+  - Puerto: 80/tcp	Estado: open	Servicio: http
+  - Puerto: 443/tcp	Estado: open	Servicio: https
+  - Puerto: 5000/tcp	Estado: open	Servicio: upnp
+  - Puerto: 8081/tcp	Estado: filtered	Servicio: blackice-icecap
+  - Puerto: 8082/tcp	Estado: filtered	Servicio: blackice-alerts
+
+Host: 192.168.0.3
+MAC: E0:01:C7:3F:56:BC
+Puertos:
+  - Puerto: 7000/tcp	Estado: open	Servicio: afs3-fileserver
+  - Puerto: 9080/tcp	Estado: open	Servicio: glrpc
+
+Host: 192.168.0.4
+MAC: D4:9C:DD:B6:FE:2A
+Puertos:
+  - Puerto: 8008/tcp	Estado: open	Servicio: http
+  - Puerto: 8009/tcp	Estado: open	Servicio: ajp13
+  - Puerto: 8443/tcp	Estado: open	Servicio: https-alt
+  - Puerto: 9000/tcp	Estado: open	Servicio: cslistener
+
+Host: 192.168.0.10
+MAC: 7C:13:1D:63:D2:5D
+Puertos:
+  - Puerto: 53/tcp	Estado: open	Servicio: domain
+  - Puerto: 80/tcp	Estado: open	Servicio: http
+  - Puerto: 3517/tcp	Estado: open	Servicio: 802-11-iapp
+
+Host: 192.168.0.14
+MAC: C8:63:F1:A7:20:76
+Puertos:
+  No se encontraron puertos abiertos.
+
+Host: 192.168.0.252
+MAC: 00:00:CA:01:02:03
+Puertos:
+  No se encontraron puertos abiertos.
+
+Host: 192.168.0.2
+Puertos:
+  - Puerto: 22/tcp	Estado: open	Servicio: ssh
+
+Host: 192.168.0.57
+Puertos:
+  - Puerto: 22/tcp	Estado: open	Servicio: ssh
+

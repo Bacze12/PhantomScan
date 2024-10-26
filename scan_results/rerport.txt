@@ -1,0 +1,61 @@
+=== Reporte de Escaneo ===
+Fecha: 2024-10-25_19-05-22
+
+Host: 192.168.0.1
+MAC: E4:57:40:9A:1C:1B
+Puertos:
+  - Puerto: 80/tcp Estado: open Servicio: http Versión: lighttpd
+    Verificar CVEs: https://cve.mitre.org/cgi-bin/cvekey.cgi?keyword=http+lighttpd
+  - Puerto: 443/tcp Estado: open Servicio: ssl/http Versión: lighttpd
+    Verificar CVEs: https://cve.mitre.org/cgi-bin/cvekey.cgi?keyword=ssl/http+lighttpd
+  - Puerto: 5000/tcp Estado: open Servicio: upnp Versión: MiniUPnP 1.9 (UPnP 1.1)
+    Verificar CVEs: https://cve.mitre.org/cgi-bin/cvekey.cgi?keyword=upnp+MiniUPnP 1.9 (UPnP 1.1)
+  - Puerto: 8081/tcp Estado: filtered Servicio: blackice-icecap Versión: N/A
+    Verificar CVEs: https://cve.mitre.org/cgi-bin/cvekey.cgi?keyword=blackice-icecap+N/A
+  - Puerto: 8082/tcp Estado: filtered Servicio: blackice-alerts Versión: N/A
+    Verificar CVEs: https://cve.mitre.org/cgi-bin/cvekey.cgi?keyword=blackice-alerts+N/A
+
+Host: 192.168.0.2
+MAC: A8:71:16:BC:B8:EE
+Puertos:
+  - Puerto: 8008/tcp Estado: open Servicio: http? Versión: N/A
+    Verificar CVEs: https://cve.mitre.org/cgi-bin/cvekey.cgi?keyword=http?+N/A
+  - Puerto: 8009/tcp Estado: open Servicio: ssl/ajp13? Versión: N/A
+    Verificar CVEs: https://cve.mitre.org/cgi-bin/cvekey.cgi?keyword=ssl/ajp13?+N/A
+  - Puerto: 8443/tcp Estado: open Servicio: ssl/https-alt? Versión: N/A
+    Verificar CVEs: https://cve.mitre.org/cgi-bin/cvekey.cgi?keyword=ssl/https-alt?+N/A
+  - Puerto: 9000/tcp Estado: open Servicio: ssl/cslistener? Versión: N/A
+    Verificar CVEs: https://cve.mitre.org/cgi-bin/cvekey.cgi?keyword=ssl/cslistener?+N/A
+
+Host: 192.168.0.4
+MAC: D4:9C:DD:B6:FE:2A
+Puertos:
+  - Puerto: 8008/tcp Estado: open Servicio: http? Versión: N/A
+    Verificar CVEs: https://cve.mitre.org/cgi-bin/cvekey.cgi?keyword=http?+N/A
+  - Puerto: 8009/tcp Estado: open Servicio: ssl/castv2 Versión: Ninja Sphere Chromecast driver
+    Verificar CVEs: https://cve.mitre.org/cgi-bin/cvekey.cgi?keyword=ssl/castv2+Ninja Sphere Chromecast driver
+  - Puerto: 8443/tcp Estado: open Servicio: ssl/https-alt? Versión: N/A
+    Verificar CVEs: https://cve.mitre.org/cgi-bin/cvekey.cgi?keyword=ssl/https-alt?+N/A
+  - Puerto: 9000/tcp Estado: open Servicio: ssl/cslistener? Versión: N/A
+    Verificar CVEs: https://cve.mitre.org/cgi-bin/cvekey.cgi?keyword=ssl/cslistener?+N/A
+
+Host: 192.168.0.10
+MAC: 7C:13:1D:63:D2:5D
+Puertos:
+  - Puerto: 53/tcp Estado: open Servicio: domain Versión: Cloudflare public DNS
+    Verificar CVEs: https://cve.mitre.org/cgi-bin/cvekey.cgi?keyword=domain+Cloudflare public DNS
+  - Puerto: 80/tcp Estado: open Servicio: http Versión: lighttpd 1.4.49
+    Verificar CVEs: https://cve.mitre.org/cgi-bin/cvekey.cgi?keyword=http+lighttpd 1.4.49
+  - Puerto: 3517/tcp Estado: open Servicio: 802-11-iapp? Versión: N/A
+    Verificar CVEs: https://cve.mitre.org/cgi-bin/cvekey.cgi?keyword=802-11-iapp?+N/A
+
+Host: 192.168.0.252
+MAC: 00:00:CA:01:02:03
+Puertos:
+
+Host: 192.168.0.5
+Puertos:
+
+Host: 192.168.0.65
+Puertos:
+

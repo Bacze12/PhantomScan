@@ -1,0 +1,84 @@
+=== Reporte de Escaneo ===
+Fecha: 2024-10-23_19-25-51
+
+Starting Nmap 7.94SVN ( https://nmap.org ) at 2024-10-23 19:24 -03
+Nmap scan report for 192.168.0.1
+Host is up (0.024s latency).
+Not shown: 995 closed tcp ports (reset)
+PORT     STATE    SERVICE
+80/tcp   open     http
+443/tcp  open     https
+5000/tcp open     upnp
+8081/tcp filtered blackice-icecap
+8082/tcp filtered blackice-alerts
+MAC Address: E4:57:40:9A:1C:1B (Arris Group)
+
+Nmap scan report for 192.168.0.3
+Host is up (0.0096s latency).
+Not shown: 998 closed tcp ports (reset)
+PORT     STATE SERVICE
+7000/tcp open  afs3-fileserver
+9080/tcp open  glrpc
+MAC Address: E0:01:C7:3F:56:BC (Unknown)
+
+Nmap scan report for 192.168.0.4
+Host is up (0.0097s latency).
+Not shown: 996 closed tcp ports (reset)
+PORT     STATE SERVICE
+8008/tcp open  http
+8009/tcp open  ajp13
+8443/tcp open  https-alt
+9000/tcp open  cslistener
+MAC Address: D4:9C:DD:B6:FE:2A (Ampak Technology)
+
+Nmap scan report for 192.168.0.5
+Host is up (0.0071s latency).
+Not shown: 995 closed tcp ports (reset)
+PORT     STATE SERVICE
+1080/tcp open  socks
+8008/tcp open  http
+8009/tcp open  ajp13
+8443/tcp open  https-alt
+9000/tcp open  cslistener
+MAC Address: 00:BF:AF:08:87:2F (Hui Zhou Gaoshengda Technology)
+
+Nmap scan report for 192.168.0.7
+Host is up (0.022s latency).
+All 1000 scanned ports on 192.168.0.7 are in ignored states.
+Not shown: 1000 closed tcp ports (reset)
+MAC Address: 3A:0D:F0:F4:4C:FF (Unknown)
+
+Nmap scan report for 192.168.0.10
+Host is up (0.0099s latency).
+Not shown: 997 closed tcp ports (reset)
+PORT     STATE SERVICE
+53/tcp   open  domain
+80/tcp   open  http
+3517/tcp open  802-11-iapp
+MAC Address: 7C:13:1D:63:D2:5D (Sernet (Suzhou) Technologies)
+
+Nmap scan report for 192.168.0.14
+Host is up (0.0050s latency).
+All 1000 scanned ports on 192.168.0.14 are in ignored states.
+Not shown: 1000 closed tcp ports (reset)
+MAC Address: C8:63:F1:A7:20:76 (Sony Interactive Entertainment)
+
+Nmap scan report for 192.168.0.252
+Host is up (0.0056s latency).
+All 1000 scanned ports on 192.168.0.252 are in ignored states.
+Not shown: 1000 closed tcp ports (reset)
+MAC Address: 00:00:CA:01:02:03 (Arris Group)
+
+Nmap scan report for 192.168.0.2
+Host is up (0.000012s latency).
+Not shown: 999 closed tcp ports (reset)
+PORT   STATE SERVICE
+22/tcp open  ssh
+
+Nmap scan report for 192.168.0.54
+Host is up (0.000011s latency).
+Not shown: 999 closed tcp ports (reset)
+PORT   STATE SERVICE
+22/tcp open  ssh
+
+Nmap done: 256 IP addresses (10 hosts up) scanned in 51.75 seconds
