@@ -91,7 +91,11 @@ def change_mac_and_ip(interface_name):
     except subprocess.CalledProcessError as e:
         print(f"{Colors.RED}Error al cambiar la dirección MAC: {e}{Colors.RESET}")
         return
+
     suggested_ip = suggest_available_ips(interface_name)
+
+    suggested_ip = suggest_available_ip(interface_name)
+
     if suggested_ip:
         print(f"{Colors.YELLOW}Sugerencia de IP no ocupada: {suggested_ip}{Colors.RESET}")
     else:

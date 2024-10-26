@@ -26,6 +26,7 @@ def generate_ip_suggestions(subnet):
     network = ipaddress.IPv4Network(subnet)
     return [str(ip) for ip in list(network.hosts())[10:13]]  # Tomamos 3 IPs de ejemplo a partir de la 11
 
+
 def suggest_available_ips(interface_name):
     """Sugiere tres direcciones IP no ocupadas en la red local."""
     ip = get_interface_ip(interface_name)
@@ -45,6 +46,25 @@ def suggest_available_ips(interface_name):
                 print(f"Error al verificar IP {suggested_ip}: {e}")
     return suggested_ips
 
+
+
+def suggest_available_ip(interface_name):
+    """Sugiere una dirección IP no ocupada en la red local."""
+    ip = get_interface_ip(interface_name)
+    if ip:
+        subnet = ip.rsplit('.', 1)[0]  # Ejemplo: '192.168.0'
+        for i in range(2, 255):
+            suggested_ip = f"{subnet}.{i}"
+            try:
+                socket.inet_aton(suggested_ip)
+                with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as sock:
+                    sock.settimeout(0.5)
+                    result = sock.connect_ex((suggested_ip, 80))
+                    if result != 0:  # Si no está ocupada, la sugerimos
+                        return suggested_ip
+            except socket.error:
+                continue
+    return None
 
 
 def get_interface_ip(interface_name):

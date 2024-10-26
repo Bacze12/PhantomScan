@@ -16,6 +16,7 @@ def correlacionar_resultados_escaneo(resultados):
                 servicio = puerto['service']
                 version = puerto['version']
 
+
                 # Filtrar servicios y versiones irrelevantes
                 if version == "N/A" or "blackice" in servicio.lower():
                     continue  # Ignorar este servicio
@@ -33,4 +34,17 @@ def correlacionar_resultados_escaneo(resultados):
                                 'descripción': cve['summary'],
                                 'gravedad': cve.get('cvss', {}).get('score', 'N/A')
                             })
+
+                cves = obtener_cve(servicio, version)
+                if cves:
+                    for cve in cves:
+                        correlaciones.append({
+                            'host': resultado['host'],
+                            'servicio': servicio,
+                            'version': version,
+                            'CVE': cve['id'],
+                            'descripción': cve['summary'],
+                            'gravedad': cve.get('cvss', {}).get('score', 'N/A')
+                        })
+
     return correlaciones
