@@ -11,7 +11,7 @@ def simulate_user_activity():
     try:
         # Ejecuta actividades comunes como realizar consultas DNS, abrir una sesión web, etc.
         subprocess.Popen(["ping", "-c", "3", "www.google.com"])  # Simula un ping a Google
-        subprocess.Popen(["curl", "http://example.com"])  # Simula una consulta web
-        subprocess.Popen(["nslookup", "example.com"])  # Simula una consulta DNS
+        subprocess.Popen(["curl", "http://youtube.com"])  # Simula una consulta web
+        subprocess.Popen(["nslookup", "youtube.com"])  # Simula una consulta DNS
     except subprocess.CalledProcessError as e:
         print(f"{Colors.RED}Error durante la simulación de actividad: {e}{Colors.RESET}")

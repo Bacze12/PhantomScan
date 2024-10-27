@@ -1,0 +1,83 @@
+=== Reporte de Escaneo ===
+Fecha: 2024-10-26_22-25-53
+
+Host: 192.168.0.1
+MAC: E4:57:40:9A:1C:1B
+Puertos:
+  - Puerto: 80/tcp Estado: open Servicio: http Versión: lighttpd
+    Verificar CVEs: https://cve.mitre.org/cgi-bin/cvekey.cgi?keyword=http+lighttpd
+    Scripts:
+      - _http-title: Site doesn't have a title (text/html).
+    Exploits en GitHub:
+      - Repositorio: https://github.com/alienwithin/OWASP-mth3l3m3nt-framework - Descripción: OWASP Mth3l3m3nt Framework is a penetration testing aiding tool and exploitation framework. It fosters a principle of attack the web using the web as well as pentest on the go through its responsive interface.
+  - Puerto: 443/tcp Estado: open Servicio: ssl/http Versión: lighttpd
+    Verificar CVEs: https://cve.mitre.org/cgi-bin/cvekey.cgi?keyword=ssl/http+lighttpd
+    Scripts:
+      - ssl-cert: Subject: commonName=localhost.localdomain/organizationName=ARRIS Group Inc./stateOrProvinceName=Georgia/countryName=US
+      - Not valid before: 2015-07-16T02:49:47
+      - _Not valid after: 2044-09-11T02:49:47
+      - tls-alpn: 
+      - _ssl-date: TLS randomness does not represent time
+      - _http-title: Site doesn't have a title (text/html).
+    No se encontraron exploits en GitHub.
+
+Host: 192.168.0.2
+MAC: A8:71:16:BC:B8:EE
+Puertos:
+
+Host: 192.168.0.5
+MAC: 00:BF:AF:08:87:2F
+Puertos:
+
+Host: 192.168.0.7
+MAC: 3A:0D:F0:F4:4C:FF
+Puertos:
+
+Host: 192.168.0.10
+MAC: 7C:13:1D:63:D2:5D
+Puertos:
+  - Puerto: 53/tcp Estado: open Servicio: domain Versión: Cloudflare public DNS
+    Verificar CVEs: https://cve.mitre.org/cgi-bin/cvekey.cgi?keyword=domain+Cloudflare public DNS
+    No se encontraron exploits en GitHub.
+  - Puerto: 80/tcp Estado: open Servicio: http Versión: lighttpd 1.4.49
+    Verificar CVEs: https://cve.mitre.org/cgi-bin/cvekey.cgi?keyword=http+lighttpd 1.4.49
+    Scripts:
+      - _http-title: Site doesn't have a title (text/html).
+      - _http-server-header: lighttpd/1.4.49
+    No se encontraron exploits en GitHub.
+
+Host: 192.168.0.16
+MAC: B2:6E:B8:63:76:C7
+Puertos:
+
+Host: 192.168.0.33
+MAC: A6:5B:39:FE:8E:98
+Puertos:
+
+Host: 192.168.0.252
+MAC: 00:00:CA:01:02:03
+Puertos:
+
+Host: 192.168.0.79
+Puertos:
+  - Puerto: 22/tcp Estado: open Servicio: ssh Versión: OpenSSH 9.6p1 Ubuntu 3ubuntu13.5 (Ubuntu Linux; protocol 2.0)
+    Verificar CVEs: https://cve.mitre.org/cgi-bin/cvekey.cgi?keyword=ssh+OpenSSH 9.6p1 Ubuntu 3ubuntu13.5 (Ubuntu Linux; protocol 2.0)
+    Scripts:
+      - ssh-hostkey: 
+      - 256 35: 31:6a:30:53:f8:09:ef:cd:50:78:ae:14:3e:8f:18 (ECDSA)
+      - _  256 03: 97:c6:5c:0e:5b:5e:c6:0c:c8:c9:f1:9a:a6:28:53 (ED25519)
+    No se encontraron exploits en GitHub.
+
+Host: 192.168.0.124
+Puertos:
+  - Puerto: 22/tcp Estado: open Servicio: ssh Versión: OpenSSH 9.6p1 Ubuntu 3ubuntu13.5 (Ubuntu Linux; protocol 2.0)
+    Verificar CVEs: https://cve.mitre.org/cgi-bin/cvekey.cgi?keyword=ssh+OpenSSH 9.6p1 Ubuntu 3ubuntu13.5 (Ubuntu Linux; protocol 2.0)
+    Scripts:
+      - ssh-hostkey: 
+      - 256 35: 31:6a:30:53:f8:09:ef:cd:50:78:ae:14:3e:8f:18 (ECDSA)
+      - _  256 03: 97:c6:5c:0e:5b:5e:c6:0c:c8:c9:f1:9a:a6:28:53 (ED25519)
+      - ssh-hostkey: Possible duplicate hosts
+      - Key 256 35: 31:6a:30:53:f8:09:ef:cd:50:78:ae:14:3e:8f:18 (ECDSA) used by:
+      - Key 256 03: 97:c6:5c:0e:5b:5e:c6:0c:c8:c9:f1:9a:a6:28:53 (ED25519) used by:
+    No se encontraron exploits en GitHub.
+

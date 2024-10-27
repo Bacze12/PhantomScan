@@ -1,13 +1,12 @@
 import os
 import threading
 from core.mac_changer import change_mac_and_ip
-from core.scan import scan_network
 from core.interface_selector import list_network_interfaces, select_interface, print_available_interfaces
-from utils.network_utils import get_interface_ip, is_valid_network
-from core.user_activity import simulate_user_activity
+from utils.network_utils import get_interface_ip, get_subnet
 from utils.input_validation import input_with_validation
+from core.scan import scan_network
+from core.user_activity import simulate_user_activity
 from core.reporting import generate_report
-from core.cve import correlacionar_resultados_escaneo  # Importar la nueva función
 
 # Colores para la terminal
 class Colors:
@@ -20,8 +19,66 @@ def check_root():
     """Verifica si el script se está ejecutando como root."""
     return os.geteuid() == 0
 
+def configure_scan():
+    """Configura y ejecuta el escaneo de red con opciones avanzadas."""
+    scan_type = input_with_validation(
+        "Selecciona el tipo de escaneo (1: Ping, 2: SYN, 3: TCP completo, 4: UDP): ",
+        lambda x: x in ['1', '2', '3', '4'],
+        "Por favor, selecciona una opción válida (1-4)."
+    )
+    scan_types_map = {'1': '-sP', '2': '-sS', '3': '-sT', '4': '-sU'}
+    selected_scan_type = scan_types_map.get(scan_type, '-sT')
+
+    if scan_type == '2' and not check_root():
+        print(f"{Colors.RED}No tienes permisos de root. Cambiando a escaneo TCP completo (-sT).{Colors.RESET}")
+        selected_scan_type = '-sT'
+    
+    ports = input("Introduce el rango de puertos a escanear (ejemplo: 1-1000) o presiona Enter para escanear todos: ")
+    ports = ports if ports else "1-1000"
+
+    # Opciones avanzadas de escaneo
+    config = {
+        "no_ping": False,
+        "detect_os": False,
+        "script_scan": False,
+        "intensity_level": 2
+    }
+    advanced_options = input_with_validation(
+        "¿Deseas configurar opciones avanzadas (sí/no)? ",
+        lambda x: x.lower() in ['sí', 'si', 'no'],
+        "Por favor, introduce 'sí' o 'no'."
+    ).lower() in ["sí", "si"]
+
+    if advanced_options:
+        config["no_ping"] = input_with_validation(
+            "¿Quieres desactivar el ping (sí/no)? ",
+            lambda x: x.lower() in ['sí', 'si', 'no'],
+            "Por favor, introduce 'sí' o 'no'."
+        ).lower() in ["sí", "si"]
+        
+        config["detect_os"] = input_with_validation(
+            "¿Deseas activar la detección de sistema operativo (sí/no)? ",
+            lambda x: x.lower() in ['sí', 'si', 'no'],
+            "Por favor, introduce 'sí' o 'no'."
+        ).lower() in ["sí", "si"]
+        
+        config["script_scan"] = input_with_validation(
+            "¿Quieres ejecutar scripts básicos (-sC) (sí/no)? ",
+            lambda x: x.lower() in ['sí', 'si', 'no'],
+            "Por favor, introduce 'sí' o 'no'."
+        ).lower() in ["sí", "si"]
+        
+        config["intensity_level"] = int(input_with_validation(
+            "Selecciona el nivel de intensidad (1: Muy sigiloso, 2: Sigiloso, 3: Normal, 4: Rápido): ",
+            lambda x: x in ['1', '2', '3', '4'],
+            "Por favor, selecciona una opción válida (1-4)."
+        ))
+
+    return selected_scan_type, ports, config
+
 def main():
-    print(f"{Colors.GREEN}Bienvenido a PhantomScan{Colors.RESET}")
+    print(f"{Colors.GREEN}Bienvenido a PhantomScan\n by Bacze{Colors.RESET}")
+    
     interfaces = list_network_interfaces()
     if not interfaces:
         print(f"{Colors.RED}No se encontraron interfaces de red.{Colors.RESET}")
@@ -29,57 +86,41 @@ def main():
 
     print_available_interfaces(interfaces)
     interface_name = select_interface(interfaces)
-    try:
-        change_mac_and_ip(interface_name)
-    except Exception as e:
-        print(f"{Colors.RED}Error al cambiar la MAC y la IP: {e}{Colors.RESET}")
-        return
+    subnet = get_subnet(interface_name)
+    
+    while True:
+        action = input_with_validation("Selecciona acción (Cambiar MAC/IP = 'c', Escanear red = 'e', Salir = 's'): ", 
+                                       lambda x: x.lower() in ['c', 'e', 's'],
+                                       "Por favor, selecciona una opción válida (c, e, s).")
 
-    current_ip = get_interface_ip(interface_name)
-    if current_ip:
-        suggested_subnet = f"{current_ip.rsplit('.', 1)[0]}.0/24"
-        print(f"{Colors.YELLOW}Subred sugerida: {suggested_subnet}{Colors.RESET}")
-    else:
-        print(f"{Colors.RED}No se pudo sugerir una subred automáticamente.{Colors.RESET}")
+        if action == 'c':
+            change_mac_and_ip(interface_name)
+            print(f"{Colors.GREEN}MAC e IP cambiadas con éxito.{Colors.RESET}")
+        elif action == 'e':
+            # Configurar escaneo de red
+            scan_type, ports, config = configure_scan()
+            print(f"\n{Colors.YELLOW}Iniciando el escaneo en la subred {subnet}{Colors.RESET}")
 
-    subnet = input_with_validation(
-        "Introduce la subred a escanear (ejemplo: 192.168.218.0/24): ",
-        lambda x: is_valid_network(x, is_subnet=True),
-        "Por favor, introduce una subred válida."
-    )
+            # Iniciar actividad simulada del usuario
+            activity_thread = threading.Thread(target=simulate_user_activity)
+            activity_thread.start()
 
-    print(f"{Colors.YELLOW}Selecciona el tipo de escaneo:{Colors.RESET}")
-    scan_type = input_with_validation(
-        "Selecciona el tipo de escaneo (1: Ping, 2: SYN, 3: TCP completo, 4: UDP): ",
-        lambda x: x in ['1', '2', '3', '4'],
-        "Por favor, selecciona una opción válida (1-4)."
-    )
+            # Ejecutar el escaneo de red
+            scan_results = scan_network(subnet, scan_type, ports, config["no_ping"], config["detect_os"], config["script_scan"], config["intensity_level"])
+            
+            # Generar el reporte si hay resultados
+            if scan_results:
+                generate_report(scan_results)
+            else:
+                print(f"{Colors.RED}No se encontraron resultados para generar el reporte.{Colors.RESET}")
 
-    scan_types_map = {'1': '-sP', '2': '-sS', '3': '-sT', '4': '-sU', '5': '-sV'}
-    if scan_type == '2' and not check_root():
-        print(f"{Colors.RED}No tienes permisos de root. Cambiando a escaneo TCP completo (-sT).{Colors.RESET}")
-        scan_type = '3'
-
-    ports = input("Introduce el rango de puertos a escanear (1-1000) o presiona Enter para escanear todos: ")
-
-    activity_thread = threading.Thread(target=simulate_user_activity)
-    activity_thread.start()
-
-    scan_results = scan_network(subnet, scan_types_map[scan_type], ports)
-    if scan_results:
-        generate_report(scan_results)
-        cves_encontradas = correlacionar_resultados_escaneo(scan_results)
-        print(f"\n{Colors.YELLOW}=== CVEs Encontradas ==={Colors.RESET}")
-        for cve in cves_encontradas:
-            print(f"Host: {cve['host']}, Servicio: {cve['servicio']}, Versión: {cve['version']}, CVE: {cve['CVE']}, Descripción: {cve['descripción']}, Gravedad: {cve['gravedad']}")
-    else:
-        print(f"{Colors.RED}No se encontraron resultados para generar el reporte.{Colors.RESET}")
-
-    activity_thread.join()
+            activity_thread.join()
+        elif action == 's':
+            print(f"{Colors.YELLOW}Cerrando PhantomScan.{Colors.RESET}")
+            break  # Sale del bucle y finaliza el programa
 
 if __name__ == "__main__":
-    try:
-        main()
-    except KeyboardInterrupt:
-        print("\n[!] Programa interrumpido. Saliendo...")
-
+    if not check_root():
+        print(f"{Colors.RED}Este script debe ejecutarse como root.{Colors.RESET}")
+        exit(1)
+    main()

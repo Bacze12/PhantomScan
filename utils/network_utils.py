@@ -3,10 +3,23 @@ import ipaddress
 import socket
 import fcntl
 import struct
+import random
 
-def change_ip(interface, new_ip):
+def change_ip(interface, new_ip, subnet):
     """Cambia la dirección IP de la interfaz especificada."""
+    if not is_valid_ip_in_subnet(new_ip, subnet):
+        print(f"[!] La IP {new_ip} no es válida o no pertenece a la subred {subnet}.")
+        return
     subprocess.call(["sudo", "ifconfig", interface, new_ip])
+
+def is_valid_ip_in_subnet(ip, subnet):
+    """Verifica si la IP está dentro de la subred."""
+    try:
+        ip_obj = ipaddress.ip_address(ip)
+        subnet_obj = ipaddress.ip_network(subnet, strict=True)
+        return ip_obj in subnet_obj
+    except ValueError:
+        return False
 
 def get_subnet(interface):
     """Obtiene la subred asociada a una interfaz de red."""
@@ -21,51 +34,29 @@ def get_subnet(interface):
         print(f"Error al obtener la subred: {e}")
     return None
 
-def generate_ip_suggestions(subnet):
-    """Genera 3 direcciones IP sugeridas dentro de una subred dada."""
-    network = ipaddress.IPv4Network(subnet)
-    return [str(ip) for ip in list(network.hosts())[10:13]]  # Tomamos 3 IPs de ejemplo a partir de la 11
-
+def generate_ip_suggestions(subnet, exclude_ip=None):
+    """Genera direcciones IP sugeridas dentro de una subred dada."""
+    network = ipaddress.ip_network(subnet)
+    potential_ips = [str(ip) for ip in network.hosts() if ip != exclude_ip and ip != network.network_address + 1]
+    random.shuffle(potential_ips)
+    return potential_ips[:10]
 
 def suggest_available_ips(interface_name):
-    """Sugiere tres direcciones IP no ocupadas en la red local."""
-    ip = get_interface_ip(interface_name)
-    if ip:
-        subnet = ip.rsplit('.', 1)[0]  # Ejemplo: '192.168.0'
-        suggested_ips = []  # Lista para almacenar IPs sugeridas
-        for i in range(2, 255):
-            suggested_ip = f"{subnet}.{i}"
-            try:
-                # Hacer un ping a la dirección IP para verificar si está ocupada
-                response = subprocess.run(['ping', '-c', '1', suggested_ip], capture_output=True)
-                if response.returncode != 0:  # No hay respuesta, IP no ocupada
-                    suggested_ips.append(suggested_ip)
-                    if len(suggested_ips) == 3:  # Solo necesitamos 3 IPs
-                        break
-            except Exception as e:
-                print(f"Error al verificar IP {suggested_ip}: {e}")
-    return suggested_ips
-
-
-
-def suggest_available_ip(interface_name):
-    """Sugiere una dirección IP no ocupada en la red local."""
-    ip = get_interface_ip(interface_name)
-    if ip:
-        subnet = ip.rsplit('.', 1)[0]  # Ejemplo: '192.168.0'
-        for i in range(2, 255):
-            suggested_ip = f"{subnet}.{i}"
-            try:
-                socket.inet_aton(suggested_ip)
-                with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as sock:
-                    sock.settimeout(0.5)
-                    result = sock.connect_ex((suggested_ip, 80))
-                    if result != 0:  # Si no está ocupada, la sugerimos
-                        return suggested_ip
-            except socket.error:
-                continue
-    return None
-
+    """Sugiere direcciones IP no ocupadas en la red local."""
+    subnet = get_subnet(interface_name)
+    current_ip = get_interface_ip(interface_name)
+    if subnet:
+        potential_ips = generate_ip_suggestions(subnet, exclude_ip=current_ip)
+        available_ips = []
+        for ip in potential_ips:
+            response = subprocess.run(['ping', '-c', '1', '-W', '1', ip], capture_output=True)
+            if response.returncode != 0:
+                available_ips.append(ip)
+                if len(available_ips) == 3:
+                    break
+        return available_ips, subnet
+    print(f"No se pudo obtener la subred para la interfaz {interface_name}.")
+    return None, None
 
 def get_interface_ip(interface_name):
     """Obtiene la IP asignada a la interfaz seleccionada."""
@@ -73,20 +64,19 @@ def get_interface_ip(interface_name):
     try:
         return socket.inet_ntoa(fcntl.ioctl(
             sock.fileno(),
-            0x8915,  # SIOCGIFADDR
+            0x8915,
             struct.pack('256s', bytes(interface_name[:15], 'utf-8'))
         )[20:24])
     except IOError:
         return None
 
-def is_valid_network(network, is_subnet=False):
-    """Valida si la IP o subred ingresada es válida."""
+def is_valid_network(ip, subnet):
+    """
+    Valida si la IP proporcionada está dentro de la subred.
+    """
     try:
-        if is_subnet:
-            # Valida la subred, considerando que la entrada debe ser una red CIDR
-            ipaddress.ip_network(network, strict=True)  # Strict=True asegura que es una red válida
-        else:
-            ipaddress.ip_address(network)  # Para IPs individuales
-        return True
+        ip_obj = ipaddress.ip_address(ip)
+        subnet_obj = ipaddress.ip_network(subnet, strict=False)
+        return ip_obj in subnet_obj
     except ValueError:
         return False

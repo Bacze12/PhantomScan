@@ -1,7 +1,7 @@
 import subprocess
 import random
 from utils.input_validation import input_with_validation
-from utils.network_utils import *
+from utils.network_utils import suggest_available_ips, change_ip, is_valid_network
 
 # Colores para la terminal
 class Colors:
@@ -13,11 +13,8 @@ class Colors:
 def change_mac(interface, new_mac):
     """Cambia la dirección MAC de la interfaz especificada a new_mac."""
     try:
-        # Desactivar la interfaz
         subprocess.run(['sudo', 'ifconfig', interface, 'down'], check=True)
-        # Cambiar la MAC
         subprocess.run(['sudo', 'ifconfig', interface, 'hw', 'ether', new_mac], check=True)
-        # Activar la interfaz
         subprocess.run(['sudo', 'ifconfig', interface, 'up'], check=True)
         print(f"Dirección MAC de {interface} cambiada a {new_mac}")
     except subprocess.CalledProcessError as e:
@@ -33,14 +30,11 @@ def get_current_mac(interface):
 
 def generate_random_mac():
     """Genera una MAC aleatoria."""
-    mac = [0x00, 0x16, 0x3e,
-           random.randint(0x00, 0x7f),
-           random.randint(0x00, 0xff),
-           random.randint(0x00, 0xff)]
+    mac = [0x00, 0x16, 0x3e, random.randint(0x00, 0x7f), random.randint(0x00, 0xff), random.randint(0x00, 0xff)]
     return ':'.join(map(lambda x: f"{x:02x}", mac))
 
 def get_mac_by_manufacturer(manufacturer):
-    """Genera una MAC basada en el fabricante (solo ejemplos, más se pueden agregar)."""
+    """Genera una MAC basada en el fabricante."""
     mac_prefixes = {
         "Cisco": "00:40:96",
         "Intel": "00:1A:2B",
@@ -72,12 +66,11 @@ def generate_mac_address(method_choice):
         )
         return get_mac_by_manufacturer(manufacturer_map[int(manufacturer_choice)])
 
-
-
 def change_mac_and_ip(interface_name):
     """Cambia la dirección MAC y la IP de la interfaz especificada."""
     original_mac = get_current_mac(interface_name)
     print(f"{Colors.YELLOW}Dirección MAC original de {interface_name}: {original_mac}{Colors.RESET}")
+
     method_choice = input_with_validation(
         "Selecciona un método para generar la MAC (1: aleatoria, 2: fabricante): ",
         lambda x: x in ['1', '2'],
@@ -85,28 +78,15 @@ def change_mac_and_ip(interface_name):
     )
     new_mac = generate_mac_address(method_choice)
     print(f"{Colors.GREEN}MAC generada: {new_mac}{Colors.RESET}")
-    try:
-        change_mac(interface_name, new_mac)
-        print(f"{Colors.GREEN}Dirección MAC de {interface_name} cambiada a {new_mac}{Colors.RESET}")
-    except subprocess.CalledProcessError as e:
-        print(f"{Colors.RED}Error al cambiar la dirección MAC: {e}{Colors.RESET}")
-        return
 
-    suggested_ip = suggest_available_ips(interface_name)
+    change_mac(interface_name, new_mac)
 
-    suggested_ip = suggest_available_ip(interface_name)
-
+    # Cambiar la IP de la interfaz después de cambiar la MAC
+    suggested_ip, subnet = suggest_available_ips(interface_name)
     if suggested_ip:
         print(f"{Colors.YELLOW}Sugerencia de IP no ocupada: {suggested_ip}{Colors.RESET}")
+        new_ip = input_with_validation("Introduce la nueva dirección IP: ", lambda ip : is_valid_network(ip,subnet), "Introduce una IP válida.")
+        change_ip(interface_name, new_ip, subnet)
+        print(f"{Colors.GREEN}Dirección IP de {interface_name} cambiada a {new_ip}{Colors.RESET}")
     else:
         print(f"{Colors.RED}No se pudo encontrar una IP disponible automáticamente.{Colors.RESET}")
-    new_ip = input_with_validation(
-        f"Introduce la nueva dirección IP (ejemplo: {suggested_ip if suggested_ip else '192.168.0.10'}): ",
-        is_valid_network,
-        "Por favor, introduce una dirección IP válida."
-    )
-    try:
-        change_ip(interface_name, new_ip)
-        print(f"{Colors.GREEN}Dirección IP de {interface_name} cambiada a {new_ip}{Colors.RESET}")
-    except subprocess.CalledProcessError as e:
-        print(f"{Colors.RED}Error al cambiar la dirección IP: {e}{Colors.RESET}")
