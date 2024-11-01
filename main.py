@@ -1,6 +1,6 @@
 import os
 import threading
-from core.mac_changer import change_mac_and_ip
+from core.mac_changer import change_mac_and_ip, restore_mac_and_ip, get_current_mac
 from core.interface_selector import list_network_interfaces, select_interface, print_available_interfaces
 from utils.network_utils import get_interface_ip, get_subnet
 from utils.input_validation import input_with_validation
@@ -86,6 +86,8 @@ def main():
 
     print_available_interfaces(interfaces)
     interface_name = select_interface(interfaces)
+    original_mac = get_current_mac(interface_name)  # Obtener la MAC original
+    original_ip = get_interface_ip(interface_name)  # Obtener la IP original
     subnet = get_subnet(interface_name)
     
     while True:
@@ -110,12 +112,25 @@ def main():
             
             # Generar el reporte si hay resultados
             if scan_results:
-                generate_report(scan_results)
+                generate_report(scan_results, report_format='html')
             else:
                 print(f"{Colors.RED}No se encontraron resultados para generar el reporte.{Colors.RESET}")
 
             activity_thread.join()
         elif action == 's':
+            # Preguntar si restaurar la MAC y la IP
+            restore = input_with_validation(
+                "¿Deseas restaurar la MAC y la IP originales (sí/no)? ",
+                lambda x: x.lower() in ['sí', 'si', 'no'],
+                "Por favor, introduce 'sí' o 'no'."
+            ).lower()
+
+            if restore in ["sí", "si"]:
+                restore_mac_and_ip(interface_name, original_mac, original_ip)  # Llamar a la función para restaurar la MAC e IP
+                print(f"{Colors.GREEN}MAC e IP restauradas a las originales.{Colors.RESET}")
+            else:
+                print(f"{Colors.YELLOW}Las configuraciones originales no se han restaurado.{Colors.RESET}")
+
             print(f"{Colors.YELLOW}Cerrando PhantomScan.{Colors.RESET}")
             break  # Sale del bucle y finaliza el programa
 

@@ -1,4 +1,5 @@
 import subprocess
+import os
 import random
 from utils.input_validation import input_with_validation
 from utils.network_utils import suggest_available_ips, change_ip, is_valid_network
@@ -90,3 +91,33 @@ def change_mac_and_ip(interface_name):
         print(f"{Colors.GREEN}Dirección IP de {interface_name} cambiada a {new_ip}{Colors.RESET}")
     else:
         print(f"{Colors.RED}No se pudo encontrar una IP disponible automáticamente.{Colors.RESET}")
+
+def restore_mac_and_ip(interface_name, original_mac, original_ip):
+    try:
+        subprocess.run(['sudo', 'ifconfig', interface_name, 'down'], check=True)
+        subprocess.run(['sudo', 'ifconfig', interface_name, 'hw', 'ether', original_mac], check=True)
+        subprocess.run(['sudo', 'ifconfig', interface_name, 'up'], check=True)
+        subprocess.run(['sudo', 'ifconfig', interface_name, original_ip], check=True)
+        print("MAC e IP restauradas correctamente.")
+    except subprocess.CalledProcessError as e:
+        print(f"Error al restaurar la MAC/IP: {e}")
+
+
+import subprocess
+import re
+
+def get_current_mac(interface_name):
+    """Obtiene la MAC actual de una interfaz de red."""
+    try:
+        result = subprocess.check_output(["ifconfig", interface_name], text=True)
+        # Busca el patrón de una dirección MAC en el resultado
+        mac_address = re.search(r"(\w{2}:\w{2}:\w{2}:\w{2}:\w{2}:\w{2})", result)
+
+        if mac_address:
+            return mac_address.group(0)
+        else:
+            print(f"No se pudo encontrar la MAC de la interfaz {interface_name}")
+            return None
+    except subprocess.CalledProcessError:
+        print(f"Error al obtener la MAC de la interfaz {interface_name}")
+        return None
