@@ -1,0 +1,27 @@
+# Archivos de sistema
+.DS_Store
+Thumbs.db
+
+# Configuración de editores
+.vscode/
+.idea/
+
+# Archivos de Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.pdb
+
+# Entornos virtuales
+venv/
+env/
+
+# Variables de entorno y configuraciones
+.env
+
+# Archivos de dependencia
+site-packages/
+
+#scan_results
+scan_results/
